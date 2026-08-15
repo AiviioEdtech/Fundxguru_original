@@ -21,15 +21,8 @@ export const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 export function Logo({ onClick, dark = false }: { dark?: boolean; onClick?: () => void }) {
   return (
     <a href="/#home" onClick={onClick} className="group flex items-center gap-2.5 leading-none sm:gap-3">
-      <span
-        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl shadow-md shadow-orange-900/15 sm:h-12 sm:w-12"
-        style={{ background: "linear-gradient(135deg, #F57C00, #0D47A1)" }}
-      >
-        <svg viewBox="0 0 100 100" className="h-7 w-7 sm:h-8 sm:w-8" aria-hidden="true">
-          <line x1="18" y1="18" x2="82" y2="82" stroke="white" strokeWidth="17" strokeLinecap="round" opacity="0.55" />
-          <line x1="18" y1="82" x2="68" y2="32" stroke="white" strokeWidth="17" strokeLinecap="round" />
-          <polygon points="92,8 80,34 58,18" fill="white" />
-        </svg>
+      <span className="flex h-11 w-11 shrink-0 items-center justify-center sm:h-12 sm:w-12">
+        <img src="/images/logo-icon-cropped.png" alt="FundXGuru" className="h-full w-full object-contain" />
       </span>
       <span>
         <span className="block text-2xl font-extrabold tracking-tight sm:text-[1.7rem]">
