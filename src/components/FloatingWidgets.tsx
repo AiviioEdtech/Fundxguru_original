@@ -112,7 +112,7 @@ export default function FloatingWidgets() {
       <AnimatePresence>
         {showApply && (
           <motion.a
-            href="#apply"
+            href="/?apply=1"
             initial={{ opacity: 0, y: 60 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 60 }}

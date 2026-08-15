@@ -12,6 +12,11 @@ export interface Enquiry {
   cibil: string;
   message: string;
   source: string;
+  email?: string;
+  pan?: string;
+  employmentType?: string;
+  companyName?: string;
+  userId?: string;
 }
 
 /**
@@ -38,7 +43,11 @@ export async function saveEnquiry(e: Omit<Enquiry, "id">): Promise<Enquiry> {
     message: e.message,
     source: e.source,
     status: "submitted",
-    user_id: null,
+    user_id: e.userId ?? null,
+    email: e.email ?? null,
+    pan: e.pan ?? null,
+    employment_type: e.employmentType ?? null,
+    company_name: e.companyName ?? null,
   });
 
   if (error) throw error;

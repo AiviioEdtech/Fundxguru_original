@@ -18,14 +18,31 @@ export const inr = (n: number) => "\u20B9" + Math.round(n).toLocaleString("en-IN
 export const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
 /* ---------- Logo ---------- */
-export function Logo({ onClick, dark: _dark = false }: { dark?: boolean; onClick?: () => void }) {
+export function Logo({ onClick, dark = false }: { dark?: boolean; onClick?: () => void }) {
   return (
-    <a href="#home" onClick={onClick} className="group flex items-center leading-none">
-      <img
-        src="/images/fundxguru-logo-cropped.png"
-        alt="FundXGuru - Smart Loans. Trusted Guidance."
-        className="h-16 w-auto object-contain sm:h-20 lg:h-[76px] xl:h-[84px]"
-      />
+    <a href="/#home" onClick={onClick} className="group flex items-center gap-2.5 leading-none sm:gap-3">
+      <span
+        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl shadow-md shadow-orange-900/15 sm:h-12 sm:w-12"
+        style={{ background: "linear-gradient(135deg, #F57C00, #0D47A1)" }}
+      >
+        <svg viewBox="0 0 100 100" className="h-7 w-7 sm:h-8 sm:w-8" aria-hidden="true">
+          <line x1="18" y1="18" x2="82" y2="82" stroke="white" strokeWidth="17" strokeLinecap="round" opacity="0.55" />
+          <line x1="18" y1="82" x2="68" y2="32" stroke="white" strokeWidth="17" strokeLinecap="round" />
+          <polygon points="92,8 80,34 58,18" fill="white" />
+        </svg>
+      </span>
+      <span>
+        <span className="block text-2xl font-extrabold tracking-tight sm:text-[1.7rem]">
+          <span className={dark ? "text-white" : "text-slate-900"}>Fund</span>
+          <span className="text-3xl text-[#F57C00] sm:text-4xl">X</span>
+          <span className={dark ? "text-white" : "text-[#0D47A1]"}>Guru</span>
+        </span>
+        <span
+          className={`block whitespace-nowrap text-[8.5px] font-bold uppercase tracking-[0.1em] sm:text-[9.5px] ${dark ? "text-blue-200/70" : "text-slate-400"}`}
+        >
+          Smart Loans. Trusted Guidance.
+        </span>
+      </span>
     </a>
   );
 }

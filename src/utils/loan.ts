@@ -27,6 +27,17 @@ export interface UserProfile {
   cibil?: string;
   bounce?: string;
   tenure?: string;
+  // Business Loan specific
+  businessVintage?: string;
+  businessRegistered?: string;
+  turnover?: string;
+  // Home Loan Balance Transfer specific
+  currentLoanOutstanding?: string;
+  currentRate?: string;
+  currentLender?: string;
+  // Loan Against Property specific
+  propertyType?: string;
+  propertyValue?: string;
 }
 
 const AMOUNT_RANGES: Record<string, number> = {
@@ -215,7 +226,7 @@ export function generateRecommendation(profile: UserProfile): Recommendation {
     topLenders = ["Advisor will guide improvement options"];
   } else {
     if (purpose === "Home Loan") {
-      category = "Home Loan Balance Transfer";
+      category = "Home Loan";
       rate = cibil === "750+" ? 8.5 : cibil === "700-749" ? 8.9 : 9.5;
       topLenders = ["HDFC Bank", "ICICI Bank", "Axis Bank", "IDFC FIRST Bank"];
     } else if (purpose === "Loan Against Property") {

@@ -66,7 +66,7 @@ export function CTABand() {
               </p>
               <div className="mt-8 flex flex-wrap items-center justify-center gap-3.5">
                 <a
-                  href="#apply"
+                  href="/?apply=1"
                   className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#FB8C00] to-[#EF6C00] px-7 py-4 text-[15px] font-extrabold text-white shadow-[0_16px_40px_-10px_rgb(245_124_0/0.65)] transition hover:-translate-y-0.5 hover:brightness-105"
                 >
                   Apply Now <Zap className="h-4.5 w-4.5" />
@@ -217,7 +217,7 @@ const LEGAL_DOCS: Record<string, { title: string; body: string[] }> = {
   privacy: {
     title: "Privacy Policy",
     body: [
-      "FundXGuru Advisory Pvt. Ltd. (\u201CFundXGuru\u201D) respects your privacy. We collect only the information you voluntarily share through our enquiry forms, calculators, calls and WhatsApp — typically your name, contact details, employment and income details, and loan requirements.",
+      "FundXGuru, a sole proprietorship registered under Udyam (UDYAM-KR-03-0062569), respects your privacy. We collect only the information you voluntarily share through our enquiry forms, calculators, calls and WhatsApp — typically your name, contact details, employment and income details, and loan requirements.",
       "This information is used solely to assess your loan eligibility, match you with suitable banks/NBFCs, and communicate offers to you. Data is shared with lending partners strictly on a need basis for processing your enquiry. We do not sell your personal data to third parties.",
       "All transmissions are protected with 256-bit SSL encryption. You may request access, correction or deletion of your data anytime by writing to info@fundxguru.com.",
     ],
@@ -266,14 +266,15 @@ export default function Footer() {
                 { icon: LinkedinIcon, label: "LinkedIn" },
                 { icon: YoutubeIcon, label: "YouTube" },
               ].map((s) => (
-                <a
+                <button
                   key={s.label}
-                  href="#home"
+                  type="button"
                   aria-label={s.label}
-                  className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/8 text-slate-300 ring-1 ring-white/10 transition hover:-translate-y-0.5 hover:bg-gradient-to-br hover:from-[#FB8C00] hover:to-[#EF6C00] hover:text-white"
+                  disabled
+                  className="flex h-9 w-9 cursor-default items-center justify-center rounded-xl bg-white/8 text-slate-300 ring-1 ring-white/10"
                 >
                   <s.icon className="h-4 w-4" />
-                </a>
+                </button>
               ))}
             </div>
           </div>
@@ -293,7 +294,7 @@ export default function Footer() {
                 </li>
               ))}
               <li>
-                <a href="#faq" className="block rounded-lg px-3 py-2 text-[13px] font-semibold text-slate-400 transition hover:bg-white/5 hover:text-white">
+                <a href="/#faq" className="block rounded-lg px-3 py-2 text-[13px] font-semibold text-slate-400 transition hover:bg-white/5 hover:text-white">
                   FAQs
                 </a>
               </li>
@@ -310,9 +311,9 @@ export default function Footer() {
             </div>
             <h4 className="mt-7 text-[12px] font-extrabold uppercase tracking-[0.18em] text-white">Tools</h4>
             <div className="mt-4 space-y-0.5">
-              <a href="#eligibility" className={legalBtn}>Eligibility Checker</a>
-              <a href="#emi-calculator" className={legalBtn}>EMI Calculator</a>
-              <a href="#bank-comparison" className={legalBtn}>Bank Comparison</a>
+              <a href="/#eligibility" className={legalBtn}>Eligibility Checker</a>
+              <a href="/#emi-calculator" className={legalBtn}>EMI Calculator</a>
+              <a href="/#bank-comparison" className={legalBtn}>Bank Comparison</a>
             </div>
           </div>
 
@@ -336,18 +337,8 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 rounded-2xl bg-white/5 p-5 ring-1 ring-white/10">
-          <p className="text-[11.5px] leading-relaxed text-slate-500">
-            <span className="font-extrabold text-slate-400">Disclaimer:</span> FundXGuru Advisory Pvt. Ltd. is a loan
-            facilitation &amp; advisory platform, not a lender. Bank policies, interest rates and charges are subject
-            to change; final terms depend on customer eligibility and lender policy. Loans are sanctioned and disbursed
-            at the sole discretion of our lending partners. Borrow responsibly — read all lender documents carefully
-            before signing.
-          </p>
-        </div>
-
-        <div className="mt-8 flex flex-col items-center justify-between gap-3 border-t border-white/10 pt-7 text-[12px] font-semibold text-slate-500 sm:flex-row">
-          <p>© {new Date().getFullYear()} FundXGuru Advisory Pvt. Ltd. All rights reserved.</p>
+        <div className="mt-12 flex flex-col items-center justify-between gap-3 border-t border-white/10 pt-7 text-[12px] font-semibold text-slate-500 sm:flex-row">
+          <p>© {new Date().getFullYear()} FundXGuru. All rights reserved.</p>
           <p className="flex items-center gap-1.5">
             Smart Loans. Trusted Guidance.
             <span className="h-1.5 w-1.5 rounded-full bg-[#F57C00]" />

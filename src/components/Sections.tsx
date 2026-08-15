@@ -1,11 +1,18 @@
 import {
   ArrowLeftRight,
+  ArrowRight,
+  BadgeCheck,
   Banknote,
+  Briefcase,
+  Building2,
+  Calendar,
+  Clock,
   Eye,
   FileCheck2,
   FileText,
   Gauge,
   Headset,
+  Home,
   Landmark,
   Percent,
   RefreshCcw,
@@ -16,11 +23,106 @@ import {
   TrendingDown,
   UserCheck,
   Users,
+  Wallet,
   Zap,
-  BadgeCheck,
-  ArrowRight,
 } from "lucide-react";
 import { BankLogo, Reveal, SectionHeader, CTAButton } from "./ui";
+import { articles } from "../data/articles";
+
+/* ================= Loan Products ================= */
+export const LOAN_PRODUCTS = [
+  {
+    slug: "personal",
+    anchor: "loan-product-personal",
+    icon: Wallet,
+    title: "Personal Loan",
+    desc: "Unsecured funds for any need — wedding, medical, travel or debt consolidation. No collateral required.",
+    rate: "10.49% p.a. onwards",
+    c: "#F57C00",
+  },
+  {
+    slug: "business",
+    anchor: "loan-product-business",
+    icon: Briefcase,
+    title: "Business Loan",
+    desc: "Working capital or expansion funding for self-employed professionals & business owners.",
+    rate: "13.00% p.a. onwards",
+    c: "#0D47A1",
+  },
+  {
+    slug: "home",
+    anchor: "loan-product-home",
+    icon: Home,
+    title: "Home Loan",
+    desc: "Move your existing home loan to a lower rate and cut years off your repayment.",
+    rate: "8.50% p.a. onwards",
+    c: "#2E7D32",
+  },
+  {
+    slug: "balance-transfer",
+    anchor: "loan-product-balance-transfer",
+    icon: ArrowLeftRight,
+    title: "Balance Transfer",
+    desc: "Move high-interest existing loans or credit card dues into one lower-rate personal loan.",
+    rate: "10.49% p.a. onwards",
+    c: "#0097A7",
+  },
+  {
+    slug: "lap",
+    anchor: "loan-product-lap",
+    icon: Building2,
+    title: "Loan Against Property",
+    desc: "Unlock funds against residential or commercial property at secured-loan rates.",
+    rate: "9.25% p.a. onwards",
+    c: "#6D28D9",
+  },
+];
+
+export function LoanProducts() {
+  return (
+    <section id="loan-products" className="relative overflow-hidden py-16 sm:py-20">
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-blue-50/50 via-white to-white" />
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <SectionHeader
+          eyebrow="Loan Products"
+          title={
+            <>
+              More Than Personal Loans —{" "}
+              <span className="text-[#0D47A1]">One Partner for Every Loan Need</span>
+            </>
+          }
+          sub="From everyday expenses to business growth and property-backed funding, we compare offers across loan types so you always get the sharpest rate."
+        />
+        <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+          {LOAN_PRODUCTS.map((p, i) => (
+            <Reveal key={p.title} delay={i * 0.08}>
+              <div
+                id={p.anchor}
+                className="group flex h-full scroll-mt-28 flex-col rounded-2xl border border-slate-100 bg-white p-6 shadow-[0_8px_30px_-14px_rgb(15_23_42/0.14)] transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_22px_48px_-18px_rgb(13_71_161/0.28)]"
+              >
+                <span
+                  className="flex h-12 w-12 items-center justify-center rounded-xl text-white shadow-md transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3"
+                  style={{ background: `linear-gradient(135deg, ${p.c}, ${p.c}CC)` }}
+                >
+                  <p.icon className="h-5 w-5" />
+                </span>
+                <h3 className="mt-4 text-[15px] font-extrabold text-slate-900">{p.title}</h3>
+                <p className="mt-2 flex-1 text-[13px] leading-relaxed text-slate-500">{p.desc}</p>
+                <p className="mt-4 text-[12.5px] font-extrabold text-[#0D47A1]">{p.rate}</p>
+                <a
+                  href={`/?loan=${p.slug}#eligibility`}
+                  className="mt-3 inline-flex items-center gap-1.5 text-[12.5px] font-extrabold text-[#F57C00] transition group-hover:gap-2.5"
+                >
+                  Check Eligibility <ArrowRight className="h-3.5 w-3.5" />
+                </a>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
 
 /* ================= Partner Banks ================= */
 const BANKS = [
@@ -241,8 +343,8 @@ export function HowItWorks() {
           ))}
         </div>
         <Reveal className="mt-12 text-center">
-          <CTAButton href="#apply" variant="orange">
-            Start Step 1 — It's Free <ArrowRight className="h-4 w-4" />
+          <CTAButton href="/?apply=1" variant="orange">
+            Start Step 1 <ArrowRight className="h-4 w-4" />
           </CTAButton>
         </Reveal>
       </div>
@@ -300,7 +402,7 @@ export function Benefits() {
                 <h3 className="mt-3 text-lg font-extrabold leading-snug">Ready to compare your live offers?</h3>
               </div>
               <a
-                href="#apply"
+                href="/?apply=1"
                 className="mt-5 inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#FB8C00] to-[#EF6C00] px-4 py-3 text-[13px] font-extrabold text-white transition hover:brightness-110"
               >
                 Check Now — Free <ArrowRight className="h-4 w-4" />
@@ -383,6 +485,71 @@ export function AboutUs() {
             </div>
           </div>
         </div>
+      </div>
+    </section>
+  );
+}
+
+/* ================= Blog / Resources teaser ================= */
+export function BlogTeasers() {
+  const latest = articles.slice().sort((a, b) => (a.date < b.date ? 1 : -1)).slice(0, 3);
+  return (
+    <section id="resources" className="relative overflow-hidden bg-gradient-to-b from-slate-50 to-white py-16 sm:py-20">
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <SectionHeader
+          eyebrow="Resources"
+          title={
+            <>
+              Loan Guides That Help You{" "}
+              <span className="text-[#F57C00]">Borrow Smarter</span>
+            </>
+          }
+          sub="Plain-English explainers on credit scores, documentation and choosing the right loan product."
+        />
+        <div className="mt-12 grid gap-5 sm:grid-cols-3">
+          {latest.map((a, i) => {
+            const Icon = a.icon;
+            return (
+              <Reveal key={a.slug} delay={i * 0.08}>
+                <a
+                  href={`/?article=${a.slug}`}
+                  className="group flex h-full flex-col rounded-2xl border border-slate-100 bg-white p-6 shadow-[0_8px_30px_-14px_rgb(15_23_42/0.14)] transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_22px_48px_-18px_rgb(13_71_161/0.28)]"
+                >
+                  <span
+                    className="flex h-11 w-11 items-center justify-center rounded-xl text-white shadow-md"
+                    style={{ background: `linear-gradient(135deg, ${a.color}, ${a.color}CC)` }}
+                  >
+                    <Icon className="h-5 w-5" />
+                  </span>
+                  <h3 className="mt-4 text-[15px] font-extrabold leading-snug text-slate-900">{a.title}</h3>
+                  <p className="mt-2 flex-1 text-[13px] leading-relaxed text-slate-500">{a.excerpt}</p>
+                  <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-3.5">
+                    <span className="flex items-center gap-3 text-[11px] font-semibold text-slate-400">
+                      <span className="flex items-center gap-1">
+                        <Calendar className="h-3.5 w-3.5" />
+                        {new Date(a.date).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <Clock className="h-3.5 w-3.5" /> {a.readTime}
+                      </span>
+                    </span>
+                    <span className="flex items-center gap-1 text-[12px] font-extrabold text-[#F57C00] transition group-hover:gap-2">
+                      Read <ArrowRight className="h-3.5 w-3.5" />
+                    </span>
+                  </div>
+                </a>
+              </Reveal>
+            );
+          })}
+        </div>
+        <Reveal className="mt-10 text-center">
+          <a
+            href="/?blog=1"
+            className="inline-flex items-center gap-1.5 text-[13px] font-extrabold text-[#0D47A1] transition hover:gap-2.5"
+          >
+            View All Articles <ArrowRight className="h-4 w-4" />
+          </a>
+        </Reveal>
       </div>
     </section>
   );

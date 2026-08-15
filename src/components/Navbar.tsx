@@ -3,20 +3,33 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, ChevronDown, Menu, Phone, ShieldCheck, X } from "lucide-react";
 import { EASE, EMAIL, Logo, PHONE_DISPLAY, PHONE_TEL } from "./ui";
 
-export const NAV_LINKS = [
-  { label: "Home", href: "#home" },
-  { label: "Personal Loan", href: "#personal-loan" },
-  { label: "Loan Eligibility", href: "#eligibility" },
-  { label: "EMI Calculator", href: "#emi-calculator" },
-  { label: "Bank Comparison", href: "#bank-comparison" },
-  { label: "Why Choose Us", href: "#why-us" },
-  { label: "About Us", href: "#about" },
-  { label: "Contact", href: "#contact" },
+export const NAV_LINKS: { label: string; href: string; children?: { label: string; href: string }[] }[] = [
+  { label: "Home", href: "/#home" },
+  {
+    label: "Loan Products",
+    href: "/#loan-products",
+    children: [
+      { label: "Personal Loan", href: "/#loan-product-personal" },
+      { label: "Home Loan", href: "/#loan-product-home" },
+      { label: "Business Loan", href: "/#loan-product-business" },
+      { label: "Balance Transfer", href: "/#loan-product-balance-transfer" },
+      { label: "Loan Against Property", href: "/#loan-product-lap" },
+    ],
+  },
+  { label: "Loan Eligibility", href: "/#eligibility" },
+  { label: "EMI Calculator", href: "/#emi-calculator" },
+  { label: "Bank Comparison", href: "/#bank-comparison" },
+  { label: "Why Choose Us", href: "/#why-us" },
+  { label: "Resources", href: "/?blog=1" },
+  { label: "About Us", href: "/#about" },
+  { label: "Contact", href: "/#contact" },
+  { label: "Track Application", href: "/?apply=1&signin=1" },
 ];
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -56,20 +69,57 @@ export default function Navbar() {
           <Logo />
 
           <nav className="hidden items-center gap-px lg:flex">
-            {NAV_LINKS.map((l) => (
-              <a
-                key={l.href}
-                href={l.href}
-                className="shrink-0 whitespace-nowrap rounded-lg px-2 py-2 text-[12px] font-bold text-slate-600 transition hover:bg-orange-50 hover:text-[#E65100] xl:px-3 xl:text-[13px]"
-              >
-                {l.label}
-              </a>
-            ))}
+            {NAV_LINKS.map((l) =>
+              l.children ? (
+                <div
+                  key={l.href}
+                  className="relative"
+                  onMouseEnter={() => setOpenDropdown(l.label)}
+                  onMouseLeave={() => setOpenDropdown(null)}
+                >
+                  <a
+                    href={l.href}
+                    className="flex shrink-0 items-center gap-1 whitespace-nowrap rounded-lg px-2 py-2 text-[12px] font-bold text-slate-600 transition hover:bg-orange-50 hover:text-[#E65100] xl:px-3 xl:text-[13px]"
+                  >
+                    {l.label} <ChevronDown className="h-3 w-3" />
+                  </a>
+                  <AnimatePresence>
+                    {openDropdown === l.label && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 8 }}
+                        transition={{ duration: 0.15 }}
+                        className="absolute left-0 top-full z-20 mt-1 w-64 overflow-hidden rounded-xl border border-slate-100 bg-white p-1.5 shadow-[0_20px_45px_-15px_rgb(15_23_42/0.3)]"
+                      >
+                        {l.children.map((c) => (
+                          <a
+                            key={c.href}
+                            href={c.href}
+                            className="block rounded-lg px-3 py-2.5 text-[13px] font-bold text-slate-600 transition hover:bg-orange-50 hover:text-[#E65100]"
+                          >
+                            {c.label}
+                          </a>
+                        ))}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              ) : (
+                <a
+                  key={l.href}
+                  href={l.href}
+                  className="shrink-0 whitespace-nowrap rounded-lg px-2 py-2 text-[12px] font-bold text-slate-600 transition hover:bg-orange-50 hover:text-[#E65100] xl:px-3 xl:text-[13px]"
+                >
+                  {l.label}
+                </a>
+              )
+            )}
           </nav>
 
           <div className="flex items-center gap-2">
             <a
-              href="#apply"
+              href="/?apply=1"
               className="hidden items-center gap-1.5 rounded-xl bg-gradient-to-r from-[#FB8C00] to-[#EF6C00] px-4 py-2.5 text-[13px] font-extrabold text-white shadow-[0_10px_24px_-8px_rgb(245_124_0/0.55)] transition hover:-translate-y-0.5 hover:brightness-105 sm:inline-flex xl:px-5"
             >
               Apply Now <ArrowRight className="h-4 w-4" />
@@ -96,21 +146,36 @@ export default function Navbar() {
             >
               <nav className="mx-auto grid max-w-7xl gap-1 px-4 py-4 sm:grid-cols-2 sm:px-6">
                 {NAV_LINKS.map((l, i) => (
-                  <motion.a
-                    key={l.href}
-                    href={l.href}
-                    onClick={() => setOpen(false)}
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.03 * i }}
-                    className="flex items-center justify-between rounded-xl px-4 py-3 text-sm font-bold text-slate-700 transition hover:bg-orange-50 hover:text-[#E65100]"
-                  >
-                    {l.label}
-                    <ChevronDown className="h-4 w-4 -rotate-90 text-slate-300" />
-                  </motion.a>
+                  <div key={l.href} className={l.children ? "sm:col-span-2" : ""}>
+                    <motion.a
+                      href={l.href}
+                      onClick={() => setOpen(false)}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.03 * i }}
+                      className="flex items-center justify-between rounded-xl px-4 py-3 text-sm font-bold text-slate-700 transition hover:bg-orange-50 hover:text-[#E65100]"
+                    >
+                      {l.label}
+                      <ChevronDown className="h-4 w-4 -rotate-90 text-slate-300" />
+                    </motion.a>
+                    {l.children && (
+                      <div className="ml-4 grid grid-cols-2 gap-1 border-l-2 border-orange-100 py-1 pl-3">
+                        {l.children.map((c) => (
+                          <a
+                            key={c.href}
+                            href={c.href}
+                            onClick={() => setOpen(false)}
+                            className="rounded-lg px-3 py-2 text-[12.5px] font-semibold text-slate-500 transition hover:bg-orange-50 hover:text-[#E65100]"
+                          >
+                            {c.label}
+                          </a>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 ))}
                 <a
-                  href="#apply"
+                  href="/?apply=1"
                   onClick={() => setOpen(false)}
                   className="mt-2 flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#FB8C00] to-[#EF6C00] px-4 py-3.5 text-sm font-extrabold text-white sm:col-span-2"
                 >

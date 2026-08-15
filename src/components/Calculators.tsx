@@ -230,7 +230,7 @@ export function EMICalculator() {
               </div>
 
               <a
-                href="#apply"
+                href="/?apply=1"
                 className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#FB8C00] to-[#EF6C00] py-3.5 text-sm font-extrabold text-white shadow-lg shadow-orange-500/25 transition hover:-translate-y-0.5 hover:brightness-105"
               >
                 <Building2 className="h-4 w-4" /> Apply at a Lower Rate

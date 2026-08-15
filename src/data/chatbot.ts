@@ -99,3 +99,86 @@ export const chatQuestions: ChatQuestion[] = [
 
 export const debtDetailKeys = ["existingPL", "ccOutstanding", "appLoans", "currentEMI", "bounce"];
 export const debtDetailPurposes = ["Balance Transfer", "Loan Consolidation", "Credit Card Payment", "App Loan Closure"];
+
+// Extra, loan-type-specific questions inserted right after the "purpose" question.
+export const loanTypeQuestions: Record<string, ChatQuestion[]> = {
+  Business: [
+    {
+      id: "biz1",
+      key: "businessVintage",
+      question: "How many years has your business been operational?",
+      type: "choice",
+      options: ["Under 1 year", "1 - 3 years", "3 - 5 years", "5+ years"],
+    },
+    {
+      id: "biz2",
+      key: "businessRegistered",
+      question: "Is your business GST or Udyam / MSME registered?",
+      type: "choice",
+      options: ["Yes, both", "GST only", "Udyam only", "Not yet registered"],
+    },
+    {
+      id: "biz3",
+      key: "turnover",
+      question: "What is your average monthly business turnover?",
+      type: "choice",
+      options: ["Under ₹2 Lakh", "₹2 - 5 Lakh", "₹5 - 10 Lakh", "₹10 - 25 Lakh", "Above ₹25 Lakh"],
+    },
+  ],
+  "Home Loan": [
+    {
+      id: "hl1",
+      key: "currentLoanOutstanding",
+      question: "What is your current outstanding home loan amount?",
+      type: "choice",
+      options: ["Under ₹10 Lakh", "₹10 - 25 Lakh", "₹25 - 50 Lakh", "₹50 Lakh - 1 Crore", "Above ₹1 Crore"],
+    },
+    {
+      id: "hl2",
+      key: "currentRate",
+      question: "What interest rate are you currently paying on this home loan?",
+      type: "choice",
+      options: ["Below 8%", "8% - 9%", "9% - 10%", "Above 10%", "Don't know"],
+    },
+    {
+      id: "hl3",
+      key: "currentLender",
+      question: "Which bank or NBFC is your current home loan with?",
+      type: "text",
+      placeholder: "e.g. SBI, HDFC, LIC Housing Finance",
+    },
+  ],
+  "Loan Against Property": [
+    {
+      id: "lap1",
+      key: "propertyType",
+      question: "What type of property will you pledge?",
+      type: "choice",
+      options: ["Residential", "Commercial", "Industrial / Land"],
+    },
+    {
+      id: "lap2",
+      key: "propertyValue",
+      question: "What is the approximate current market value of the property?",
+      type: "choice",
+      options: ["Under ₹25 Lakh", "₹25 - 50 Lakh", "₹50 Lakh - 1 Crore", "₹1 - 2 Crore", "Above ₹2 Crore"],
+    },
+  ],
+};
+
+// URL slug (?loan=<slug>) -> the exact "purpose" value the recommendation engine understands.
+export const LOAN_SLUG_TO_PURPOSE: Record<string, string> = {
+  personal: "Fresh Loan",
+  business: "Business",
+  home: "Home Loan",
+  "balance-transfer": "Balance Transfer",
+  lap: "Loan Against Property",
+};
+
+export const PURPOSE_TO_LABEL: Record<string, string> = {
+  "Fresh Loan": "Personal Loan",
+  Business: "Business Loan",
+  "Home Loan": "Home Loan",
+  "Balance Transfer": "Balance Transfer",
+  "Loan Against Property": "Loan Against Property",
+};

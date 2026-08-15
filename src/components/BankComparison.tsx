@@ -131,7 +131,7 @@ export default function BankComparison() {
                   ))}
                 </div>
                 <a
-                  href="#apply"
+                  href="/?apply=1"
                   className="group flex items-center justify-center gap-2 border-t border-slate-100 py-3.5 text-[13px] font-extrabold text-[#E65100] transition hover:bg-orange-50"
                 >
                   Get personalised quotes from both

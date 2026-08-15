@@ -82,9 +82,31 @@ export default function Hero() {
               transition={{ duration: 0.75, delay: 0.16, ease: EASE }}
               className="mt-5 max-w-xl text-[15px] leading-relaxed text-slate-500 sm:text-lg"
             >
-              Compare offers from <span className="font-bold text-slate-700">ICICI Bank, HDFC Bank, Axis Bank, Kotak
-              Mahindra Bank, IDFC FIRST Bank</span> and Top NBFCs — all in one place, at zero cost.
+              Compare offers from top banks and NBFCs. Check your eligibility for{" "}
+              <span className="font-bold text-slate-700">
+                Personal Loan, Balance Transfer, Loan Consolidation, Home Loan, Business Loan and Loan Against
+                Property
+              </span>{" "}
+              — all in one place, at zero cost.
             </motion.p>
+
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.2, ease: EASE }}
+              className="mt-4 flex flex-wrap gap-2"
+            >
+              {["Personal Loan", "Balance Transfer", "Loan Consolidation", "Home Loan", "Business Loan", "Loan Against Property"].map(
+                (t) => (
+                  <span
+                    key={t}
+                    className="rounded-full border border-slate-200 bg-white px-3 py-1 text-[11.5px] font-bold text-slate-500"
+                  >
+                    {t}
+                  </span>
+                )
+              )}
+            </motion.div>
 
             <motion.div
               initial={{ opacity: 0, y: 28 }}
@@ -92,10 +114,10 @@ export default function Hero() {
               transition={{ duration: 0.75, delay: 0.24, ease: EASE }}
               className="mt-8 flex flex-wrap items-center gap-3.5"
             >
-              <CTAButton href="#eligibility" variant="blue">
+              <CTAButton href="/#eligibility" variant="blue">
                 Check Eligibility <ArrowRight className="h-4 w-4" />
               </CTAButton>
-              <CTAButton href="#apply" variant="orange">
+              <CTAButton href="/?apply=1" variant="orange">
                 Apply Now <Zap className="h-4 w-4" />
               </CTAButton>
               <CTAButton href={WA_LINK} external variant="green">
@@ -204,3 +226,4 @@ export function TrustStrip() {
     </section>
   );
 }
+

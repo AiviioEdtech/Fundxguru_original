@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
 import type { Session } from "@supabase/supabase-js";
+import { ShieldCheck } from "lucide-react";
 import { supabase } from "../lib/supabase";
+import { Logo } from "../components/ui";
 import { Dashboard } from "./Dashboard";
 
 // Only this exact email can ever sign in — enforced two ways:
@@ -84,12 +86,28 @@ function Login({ adminEmail, loggedInAsWrongUser }: { adminEmail: string; logged
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-50 p-4">
-      <div className="w-full max-w-sm rounded-2xl border border-slate-100 bg-white p-8 shadow-[0_30px_70px_-26px_rgb(13_71_161/0.25)]">
-        <h1 className="text-lg font-extrabold text-slate-900">FundXGuru Admin</h1>
-        <p className="mt-1 text-[13px] text-slate-400">
-          {step === "email" ? "Sign in with your authorised email." : `Enter the code sent to ${email}.`}
-        </p>
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-gradient-to-b from-[#EFF5FF] via-white to-white p-4">
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute -left-24 top-24 h-72 w-72 rounded-full bg-[#F57C00]/10 blur-3xl" />
+        <div className="absolute -right-20 top-10 h-80 w-80 rounded-full bg-[#0D47A1]/10 blur-3xl" />
+        <div className="absolute -bottom-16 left-1/3 h-64 w-64 rounded-full bg-[#2E7D32]/8 blur-3xl" />
+        <div className="bg-dots absolute inset-x-0 top-0 h-full opacity-60 [mask-image:radial-gradient(ellipse_at_top,black,transparent_65%)]" />
+      </div>
+
+      <div className="relative w-full max-w-sm">
+        <div className="mb-6 flex justify-center">
+          <Logo />
+        </div>
+        <div className="rounded-2xl border border-slate-100 bg-white p-8 shadow-[0_30px_70px_-26px_rgb(13_71_161/0.25)]">
+          <div className="flex items-center gap-2.5">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-[#0D47A1]">
+              <ShieldCheck className="h-4.5 w-4.5" />
+            </span>
+            <h1 className="text-lg font-extrabold text-slate-900">Admin Access</h1>
+          </div>
+          <p className="mt-3 text-[13px] text-slate-400">
+            {step === "email" ? "Sign in with your authorised email." : `Enter the code sent to ${email}.`}
+          </p>
 
         {loggedInAsWrongUser && (
           <p className="mt-4 rounded-lg bg-rose-50 p-3 text-[12px] font-semibold text-rose-700">
@@ -163,6 +181,7 @@ function Login({ adminEmail, loggedInAsWrongUser }: { adminEmail: string; logged
             </button>
           </form>
         )}
+        </div>
       </div>
     </div>
   );

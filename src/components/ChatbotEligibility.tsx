@@ -1,5 +1,13 @@
-import { useEffect, useRef, useState } from "react";
-import { chatQuestions, debtDetailKeys, debtDetailPurposes } from "../data/chatbot";
+import { useEffect, useMemo, useRef, useState } from "react";
+import type { ChatQuestion } from "../data/chatbot";
+import {
+  LOAN_SLUG_TO_PURPOSE,
+  PURPOSE_TO_LABEL,
+  chatQuestions,
+  debtDetailKeys,
+  debtDetailPurposes,
+  loanTypeQuestions,
+} from "../data/chatbot";
 import { generateRecommendation, type UserProfile } from "../utils/loan";
 import { saveEnquiry, submitToGoogleSheet } from "../utils/enquiry";
 import { PHONE_DISPLAY, PHONE_TEL, WHATSAPP_NUMBER } from "./ui";
@@ -10,11 +18,11 @@ interface Message {
 }
 
 // Next step, skipping the debt-detail questions unless the loan purpose needs them.
-function getNextStep(currentStep: number, currentProfile: UserProfile): number {
+function getNextStep(currentStep: number, currentProfile: UserProfile, questions: ChatQuestion[]): number {
   let next = currentStep + 1;
   const needsDebtDetails = debtDetailPurposes.includes(currentProfile.purpose || "");
-  while (next < chatQuestions.length) {
-    const nextQ = chatQuestions[next];
+  while (next < questions.length) {
+    const nextQ = questions[next];
     if (debtDetailKeys.includes(nextQ.key) && !needsDebtDetails) {
       next += 1;
     } else {
@@ -25,10 +33,14 @@ function getNextStep(currentStep: number, currentProfile: UserProfile): number {
 }
 
 export function ChatbotEligibility() {
+  const [presetPurpose] = useState<string | null>(() => {
+    const slug = new URLSearchParams(window.location.search).get("loan");
+    return slug ? LOAN_SLUG_TO_PURPOSE[slug] || null : null;
+  });
   const [messages, setMessages] = useState<Message[]>([]);
   const [step, setStep] = useState(0);
   const [input, setInput] = useState("");
-  const [profile, setProfile] = useState<UserProfile>({});
+  const [profile, setProfile] = useState<UserProfile>(() => (presetPurpose ? { purpose: presetPurpose } : {}));
   const [done, setDone] = useState(false);
   const [typing, setTyping] = useState(false);
   const [submittingLead, setSubmittingLead] = useState(false);
@@ -36,7 +48,30 @@ export function ChatbotEligibility() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const leadSubmittedRef = useRef(false);
 
-  const currentQ = chatQuestions[step];
+  // The active question flow: base questions, plus loan-type-specific ones
+  // inserted right after "purpose" is known (either preset via URL, or answered live).
+  const activeQuestions = useMemo(() => {
+    const list: ChatQuestion[] = [];
+    const amountQ = chatQuestions[0];
+    if (presetPurpose) {
+      const label = PURPOSE_TO_LABEL[presetPurpose] || "loan";
+      list.push({
+        ...amountQ,
+        question: `Hi! 👋 I'm the FundXGuru AI Advisor. Let's check your eligibility for a ${label}. How much loan amount do you need?`,
+      });
+    } else {
+      list.push(amountQ);
+      list.push(chatQuestions[1]); // ask "purpose" only when it isn't already known
+    }
+    const activePurpose = presetPurpose || profile.purpose;
+    if (activePurpose && loanTypeQuestions[activePurpose]) {
+      list.push(...loanTypeQuestions[activePurpose]);
+    }
+    list.push(...chatQuestions.slice(2));
+    return list;
+  }, [presetPurpose, profile.purpose]);
+
+  const currentQ = activeQuestions[step];
 
   useEffect(() => {
     if (done || !currentQ) return;
@@ -77,9 +112,9 @@ export function ChatbotEligibility() {
     setProfile(updatedProfile);
     setInput("");
 
-    const nextStep = getNextStep(step, updatedProfile);
+    const nextStep = getNextStep(step, updatedProfile, activeQuestions);
 
-    if (nextStep >= chatQuestions.length) {
+    if (nextStep >= activeQuestions.length) {
       setTimeout(() => {
         setMessages((m) => [...m, { from: "bot", text: "✨ Analyzing your profile across 12+ Banks & NBFCs..." }]);
       }, 500);
@@ -96,7 +131,7 @@ export function ChatbotEligibility() {
     setMessages([]);
     setStep(0);
     setInput("");
-    setProfile({});
+    setProfile(presetPurpose ? { purpose: presetPurpose } : {});
     setDone(false);
     setSubmittingLead(false);
     setSavedEnquiryId("");
@@ -106,13 +141,23 @@ export function ChatbotEligibility() {
   async function submitLead() {
     setSubmittingLead(true);
 
-    const message = `Chatbot lead. Age: ${profile.age || "N/A"}. City: ${profile.city || "N/A"}. Employment: ${profile.employment || "N/A"}, Company: ${profile.company || "N/A"}. Tenure requested: ${profile.tenure || "N/A"} months. Existing loans: ${profile.existingPL || "N/A"}. CC outstanding: ${profile.ccOutstanding || "N/A"}. App loans: ${profile.appLoans || "N/A"}. Current EMI: ${profile.currentEMI || "N/A"}. EMI bounce: ${profile.bounce || "N/A"}.`;
+    const extraDetails: string[] = [];
+    if (profile.businessVintage) extraDetails.push(`Business vintage: ${profile.businessVintage}.`);
+    if (profile.businessRegistered) extraDetails.push(`GST/Udyam registered: ${profile.businessRegistered}.`);
+    if (profile.turnover) extraDetails.push(`Monthly turnover: ${profile.turnover}.`);
+    if (profile.currentLoanOutstanding) extraDetails.push(`Current home loan outstanding: ${profile.currentLoanOutstanding}.`);
+    if (profile.currentRate) extraDetails.push(`Current home loan rate: ${profile.currentRate}.`);
+    if (profile.currentLender) extraDetails.push(`Current lender: ${profile.currentLender}.`);
+    if (profile.propertyType) extraDetails.push(`Property type: ${profile.propertyType}.`);
+    if (profile.propertyValue) extraDetails.push(`Property value: ${profile.propertyValue}.`);
+
+    const message = `Chatbot lead. Age: ${profile.age || "N/A"}. City: ${profile.city || "N/A"}. Employment: ${profile.employment || "N/A"}, Company: ${profile.company || "N/A"}. Tenure requested: ${profile.tenure || "N/A"} months. Existing loans: ${profile.existingPL || "N/A"}. CC outstanding: ${profile.ccOutstanding || "N/A"}. App loans: ${profile.appLoans || "N/A"}. Current EMI: ${profile.currentEMI || "N/A"}. EMI bounce: ${profile.bounce || "N/A"}.${extraDetails.length ? " " + extraDetails.join(" ") : ""}`;
 
     const enquiry = {
       name: profile.name || "Anonymous",
       mobile: profile.mobile || "Not provided",
       city: profile.city || "Not provided",
-      loanType: profile.purpose || "Chatbot Lead",
+      loanType: (profile.purpose && PURPOSE_TO_LABEL[profile.purpose]) || profile.purpose || "Chatbot Lead",
       amount: profile.amount || "0",
       income: profile.income || "0",
       emi: profile.currentEMI || "0",
@@ -192,14 +237,14 @@ export function ChatbotEligibility() {
         <div className="px-4 pt-3">
           <div className="mb-1 flex justify-between text-[10px] text-slate-500">
             <span>
-              Question {Math.min(step + 1, chatQuestions.length)} of {chatQuestions.length}
+              Question {Math.min(step + 1, activeQuestions.length)} of {activeQuestions.length}
             </span>
-            <span>{Math.round((step / chatQuestions.length) * 100)}% complete</span>
+            <span>{Math.round((step / activeQuestions.length) * 100)}% complete</span>
           </div>
           <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
             <div
               className="h-full bg-gradient-to-r from-[#FB8C00] to-[#EF6C00] transition-all duration-500"
-              style={{ width: `${(step / chatQuestions.length) * 100}%` }}
+              style={{ width: `${(step / activeQuestions.length) * 100}%` }}
             />
           </div>
         </div>
