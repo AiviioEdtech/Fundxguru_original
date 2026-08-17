@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
 import type { Session } from "@supabase/supabase-js";
-import { CheckCircle2, FileText, UploadCloud } from "lucide-react";
+import { CheckCircle2, FileText, Send, UploadCloud } from "lucide-react";
 import { supabase } from "../lib/supabase";
 import { saveEnquiry } from "../utils/enquiry";
 import type { PendingProfile } from "./Apply";
@@ -197,10 +197,47 @@ function TrackingView({
 }) {
   const [uploading, setUploading] = useState<string | null>(null);
   const [uploadError, setUploadError] = useState("");
+  const [submittingDocs, setSubmittingDocs] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
   const stage = STATUS_TO_STAGE[enquiry.status?.toLowerCase()] || "Submitted";
   const stageIndex = STAGES.indexOf(stage);
   const isRejected = stage === "Rejected";
+  const docVerificationIndex = STAGES.indexOf("Document Verification");
+  const allDocsUploaded = CORE_DOCS.every((docType) => documents.some((d) => d.document_type === docType));
+  const alreadySubmittedForReview = stageIndex >= docVerificationIndex;
+
+  const handleSubmitForReview = async () => {
+    setSubmitError("");
+    setSubmittingDocs(true);
+    try {
+      const { error: updErr } = await supabase
+        .from("enquiries")
+        .update({ status: "document_verification" })
+        .eq("id", enquiry.id);
+      if (updErr) throw updErr;
+
+      fetch("https://formsubmit.co/ajax/info@fundxguru.com", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          _subject: `Documents submitted for review — ${enquiry.name} (${enquiry.id})`,
+          "Enquiry ID": enquiry.id,
+          Name: enquiry.name,
+          Mobile: enquiry.mobile,
+          "Loan Type": enquiry.loan_type,
+          Amount: enquiry.amount,
+          Message: "Customer has uploaded all required documents and submitted the application for review.",
+        }),
+      }).catch(() => {});
+
+      onUploaded();
+    } catch (err: any) {
+      setSubmitError(err.message || "Could not submit. Please try again.");
+    } finally {
+      setSubmittingDocs(false);
+    }
+  };
 
   const handleUpload = async (docType: string, file: File) => {
     setUploadError("");
@@ -347,6 +384,29 @@ function TrackingView({
               </div>
             );
           })}
+        </div>
+
+        <div className="mt-5 border-t border-slate-100 pt-5">
+          {alreadySubmittedForReview ? (
+            <p className="flex items-center gap-2 rounded-xl bg-emerald-50 p-3.5 text-sm font-bold text-emerald-700">
+              <CheckCircle2 className="h-4.5 w-4.5" /> Documents submitted — your application is under review.
+            </p>
+          ) : allDocsUploaded ? (
+            <>
+              {submitError && <p className="mb-2 text-[12px] font-semibold text-rose-600">{submitError}</p>}
+              <button
+                onClick={handleSubmitForReview}
+                disabled={submittingDocs}
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#FB8C00] to-[#EF6C00] py-3.5 text-sm font-extrabold text-white transition hover:brightness-105 disabled:opacity-60"
+              >
+                <Send className="h-4 w-4" /> {submittingDocs ? "Submitting…" : "Submit Documents for Review"}
+              </button>
+            </>
+          ) : (
+            <p className="text-center text-[12.5px] font-semibold text-slate-400">
+              Upload all {CORE_DOCS.length} documents above to submit your application for review.
+            </p>
+          )}
         </div>
       </div>
     </div>
