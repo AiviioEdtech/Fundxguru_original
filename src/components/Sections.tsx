@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
   ArrowLeftRight,
   ArrowRight,
@@ -6,6 +7,8 @@ import {
   Briefcase,
   Building2,
   Calendar,
+  ChevronLeft,
+  ChevronRight,
   Clock,
   Eye,
   FileCheck2,
@@ -14,6 +17,7 @@ import {
   Headset,
   Home,
   Landmark,
+  MessageCircle,
   Percent,
   RefreshCcw,
   Scale,
@@ -26,7 +30,7 @@ import {
   Wallet,
   Zap,
 } from "lucide-react";
-import { BankLogo, Reveal, SectionHeader, CTAButton } from "./ui";
+import { BankLogo, Reveal, SectionHeader, CTAButton, WA_LINK } from "./ui";
 import { articles } from "../data/articles";
 
 /* ================= Loan Products ================= */
@@ -551,6 +555,119 @@ export function BlogTeasers() {
           </a>
         </Reveal>
       </div>
+    </section>
+  );
+}
+
+/* ================= Promo Slider (Loan Consolidation / Home Loan BT) ================= */
+const PROMO_SLIDES = [
+  {
+    eyebrow: "Loan Consolidation",
+    title: (
+      <>
+        Combine Multiple Loans into <span className="text-[#FFA733]">One Lower EMI</span>
+      </>
+    ),
+    desc: "Personal loans, credit cards, app loans — one simple, lower-EMI option from India's top banks & NBFCs.",
+    stats: [
+      { label: "Avg Savings", value: "₹27,000/mo" },
+      { label: "New Rate", value: "~12% p.a." },
+    ],
+    cta: "Check Consolidation Eligibility",
+    ctaHref: "/?loan=balance-transfer#eligibility",
+  },
+  {
+    eyebrow: "Home Loan Balance Transfer",
+    title: (
+      <>
+        Switch Your Home Loan &amp; <span className="text-[#FFA733]">Save More on Interest</span>
+      </>
+    ),
+    desc: "Move your existing home loan to a lower rate — same property, same tenure comfort, lower EMI from day one.",
+    stats: [
+      { label: "Rate Starts", value: "8.50% p.a." },
+      { label: "Tenure Up To", value: "30 Years" },
+    ],
+    cta: "Check My New EMI",
+    ctaHref: "/?loan=home#eligibility",
+  },
+];
+
+export function PromoSlider() {
+  const [index, setIndex] = useState(0);
+  const [paused, setPaused] = useState(false);
+
+  useEffect(() => {
+    if (paused) return;
+    const t = setInterval(() => setIndex((i) => (i + 1) % PROMO_SLIDES.length), 5000);
+    return () => clearInterval(t);
+  }, [paused]);
+
+  const slide = PROMO_SLIDES[index];
+  const prev = () => setIndex((i) => (i - 1 + PROMO_SLIDES.length) % PROMO_SLIDES.length);
+  const next = () => setIndex((i) => (i + 1) % PROMO_SLIDES.length);
+
+  return (
+    <section className="relative z-10 mx-auto mt-6 max-w-7xl px-4 sm:px-6 lg:px-8">
+      <Reveal>
+        <div
+          className="relative overflow-hidden rounded-[1.75rem] bg-gradient-to-br from-[#0D47A1] to-[#0B3C89] p-6 text-white shadow-[0_24px_60px_-24px_rgb(13_71_161/0.5)] sm:p-9"
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
+        >
+          <span className="inline-flex items-center gap-2 rounded-full bg-white/12 px-4 py-1.5 text-[11px] font-extrabold uppercase tracking-[0.1em] text-amber-300">
+            {slide.eyebrow}
+          </span>
+          <h3 className="mt-3.5 max-w-lg text-[1.4rem] font-extrabold leading-[1.25] sm:text-2xl">{slide.title}</h3>
+          <p className="mt-2.5 max-w-md text-[13px] leading-relaxed text-blue-100/80">{slide.desc}</p>
+
+          <div className="mt-5 flex flex-wrap gap-3">
+            {slide.stats.map((s) => (
+              <div key={s.label} className="rounded-xl bg-white px-4 py-2.5">
+                <p className="text-[9.5px] font-extrabold uppercase tracking-wider text-slate-400">{s.label}</p>
+                <p className="text-[15px] font-extrabold text-[#0D47A1]">{s.value}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-6 flex flex-wrap gap-3">
+            <CTAButton href={slide.ctaHref} variant="orange">
+              {slide.cta} <ArrowRight className="h-4 w-4" />
+            </CTAButton>
+            <CTAButton href={WA_LINK} external variant="white">
+              <MessageCircle className="h-4 w-4" /> WhatsApp Us
+            </CTAButton>
+          </div>
+
+          {/* Arrows */}
+          <button
+            onClick={prev}
+            aria-label="Previous offer"
+            className="absolute left-3 top-1/2 hidden h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/12 text-white transition hover:bg-white/20 sm:flex"
+          >
+            <ChevronLeft className="h-4.5 w-4.5" />
+          </button>
+          <button
+            onClick={next}
+            aria-label="Next offer"
+            className="absolute right-3 top-1/2 hidden h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/12 text-white transition hover:bg-white/20 sm:flex"
+          >
+            <ChevronRight className="h-4.5 w-4.5" />
+          </button>
+        </div>
+
+        {/* Dots */}
+        <div className="mt-3.5 flex justify-center gap-2">
+          {PROMO_SLIDES.map((s, i) => (
+            <button
+              key={s.eyebrow}
+              onClick={() => setIndex(i)}
+              aria-label={`Show ${s.eyebrow} offer`}
+              className={`h-1.5 rounded-full transition-all ${i === index ? "w-6 bg-[#0D47A1]" : "w-1.5 bg-slate-200 hover:bg-slate-300"}`}
+            />
+          ))}
+        </div>
+      </Reveal>
     </section>
   );
 }
