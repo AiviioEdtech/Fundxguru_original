@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import {
   ArrowLeftRight,
   ArrowRight,
@@ -7,9 +6,8 @@ import {
   Briefcase,
   Building2,
   Calendar,
-  ChevronLeft,
-  ChevronRight,
   Clock,
+  CreditCard,
   Eye,
   FileCheck2,
   FileText,
@@ -24,6 +22,7 @@ import {
   SearchCheck,
   Send,
   Shuffle,
+  Smartphone,
   TrendingDown,
   UserCheck,
   Users,
@@ -559,112 +558,149 @@ export function BlogTeasers() {
   );
 }
 
-/* ================= Promo Slider (Loan Consolidation / Home Loan BT) ================= */
-const PROMO_SLIDES = [
+/* ================= Loan Consolidation Spotlight ================= */
+const CONSOLIDATION_STRATEGIES = [
   {
-    eyebrow: "Loan Consolidation",
-    title: (
-      <>
-        Combine Multiple Loans into <span className="text-[#FFA733]">One Lower EMI</span>
-      </>
-    ),
-    desc: "Personal loans, credit cards, app loans — one simple, lower-EMI option from India's top banks & NBFCs.",
-    stats: [
-      { label: "Avg Savings", value: "₹27,000/mo" },
-      { label: "New Rate", value: "~12% p.a." },
-    ],
-    cta: "Check Consolidation Eligibility",
-    ctaHref: "/?loan=balance-transfer#eligibility",
+    icon: ArrowLeftRight,
+    title: "Personal Loan Balance Transfer",
+    desc: "Move your existing personal loan(s) to a lower-rate lender and save on EMI.",
+    tag: "Save up to 4–6% interest p.a.",
+    c: "#F57C00",
   },
   {
-    eyebrow: "Home Loan Balance Transfer",
-    title: (
-      <>
-        Switch Your Home Loan &amp; <span className="text-[#FFA733]">Save More on Interest</span>
-      </>
-    ),
-    desc: "Move your existing home loan to a lower rate — same property, same tenure comfort, lower EMI from day one.",
-    stats: [
-      { label: "Rate Starts", value: "8.50% p.a." },
-      { label: "Tenure Up To", value: "30 Years" },
-    ],
-    cta: "Check My New EMI",
-    ctaHref: "/?loan=home#eligibility",
+    icon: CreditCard,
+    title: "Credit Card Outstanding to EMI",
+    desc: "Convert high-interest (36–42%) credit card dues into a low-EMI personal loan (11–14%).",
+    tag: "Save up to 28% interest",
+    c: "#0D47A1",
+  },
+  {
+    icon: Smartphone,
+    title: "App Loan Closure",
+    desc: "Close all your app loans (KreditBee, MoneyTap, etc.) with one consolidated loan.",
+    tag: "Improve CIBIL score",
+    c: "#2E7D32",
+  },
+  {
+    icon: Shuffle,
+    title: "Multiple EMI Consolidation",
+    desc: "Convert 3–5 different EMIs into one single, manageable EMI.",
+    tag: "Reduce EMI by up to 35%",
+    c: "#6D28D9",
   },
 ];
 
-export function PromoSlider() {
-  const [index, setIndex] = useState(0);
-  const [paused, setPaused] = useState(false);
+const CONSOLIDATION_BENEFITS = [
+  { icon: Banknote, label: "Lower EMI", sub: "Reduce monthly burden by up to 35%" },
+  { icon: Clock, label: "Better Tenure", sub: "Stretch up to 84 months for comfort" },
+  { icon: BadgeCheck, label: "Single EMI", sub: "One date, one bank, one EMI" },
+  { icon: TrendingDown, label: "Better CIBIL", sub: "Closing multiple loans improves score" },
+];
 
-  useEffect(() => {
-    if (paused) return;
-    const t = setInterval(() => setIndex((i) => (i + 1) % PROMO_SLIDES.length), 5000);
-    return () => clearInterval(t);
-  }, [paused]);
-
-  const slide = PROMO_SLIDES[index];
-  const prev = () => setIndex((i) => (i - 1 + PROMO_SLIDES.length) % PROMO_SLIDES.length);
-  const next = () => setIndex((i) => (i + 1) % PROMO_SLIDES.length);
-
+export function LoanConsolidationSpotlight() {
   return (
     <section className="relative z-10 mx-auto mt-6 max-w-7xl px-4 sm:px-6 lg:px-8">
       <Reveal>
-        <div
-          className="relative overflow-hidden rounded-[1.75rem] bg-gradient-to-br from-[#0D47A1] to-[#0B3C89] p-6 text-white shadow-[0_24px_60px_-24px_rgb(13_71_161/0.5)] sm:p-9"
-          onMouseEnter={() => setPaused(true)}
-          onMouseLeave={() => setPaused(false)}
-        >
-          <span className="inline-flex items-center gap-2 rounded-full bg-white/12 px-4 py-1.5 text-[11px] font-extrabold uppercase tracking-[0.1em] text-amber-300">
-            {slide.eyebrow}
-          </span>
-          <h3 className="mt-3.5 max-w-lg text-[1.4rem] font-extrabold leading-[1.25] sm:text-2xl">{slide.title}</h3>
-          <p className="mt-2.5 max-w-md text-[13px] leading-relaxed text-blue-100/80">{slide.desc}</p>
-
-          <div className="mt-5 flex flex-wrap gap-3">
-            {slide.stats.map((s) => (
-              <div key={s.label} className="rounded-xl bg-white px-4 py-2.5">
-                <p className="text-[9.5px] font-extrabold uppercase tracking-wider text-slate-400">{s.label}</p>
-                <p className="text-[15px] font-extrabold text-[#0D47A1]">{s.value}</p>
+        <div className="overflow-hidden rounded-[1.75rem] bg-gradient-to-br from-[#0D47A1] to-[#0B3C89] p-6 text-white shadow-[0_24px_60px_-24px_rgb(13_71_161/0.5)] sm:p-9">
+          <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+            <div>
+              <span className="inline-flex items-center gap-2 rounded-full bg-white/12 px-4 py-1.5 text-[11px] font-extrabold uppercase tracking-[0.1em] text-amber-300">
+                Loan Consolidation
+              </span>
+              <h2 className="mt-3.5 text-[1.7rem] font-extrabold leading-[1.2] sm:text-4xl">
+                Combine Multiple Loans into <span className="text-[#FFA733]">One Better EMI</span>
+              </h2>
+              <p className="mt-3 max-w-md text-[14px] leading-relaxed text-blue-100/80">
+                FundXGuru helps you combine personal loans, credit cards, app loans and multiple EMIs into one
+                simple, lower-EMI option — from India's top banks &amp; NBFCs.
+              </p>
+              <div className="mt-6 flex flex-wrap gap-3">
+                <CTAButton href="/?loan=balance-transfer#eligibility" variant="white">
+                  Check Consolidation Eligibility <ArrowRight className="h-4 w-4" />
+                </CTAButton>
+                <CTAButton href={WA_LINK} external variant="green">
+                  <MessageCircle className="h-4 w-4" /> Talk to Advisor
+                </CTAButton>
               </div>
-            ))}
-          </div>
+            </div>
 
-          <div className="mt-6 flex flex-wrap gap-3">
-            <CTAButton href={slide.ctaHref} variant="orange">
-              {slide.cta} <ArrowRight className="h-4 w-4" />
-            </CTAButton>
-            <CTAButton href={WA_LINK} external variant="white">
-              <MessageCircle className="h-4 w-4" /> WhatsApp Us
-            </CTAButton>
+            <div className="rounded-2xl bg-white/8 p-5 ring-1 ring-white/15">
+              <p className="text-[10px] font-extrabold uppercase tracking-wider text-emerald-300">Real Example</p>
+              <div className="mt-3 space-y-2 text-[12.5px]">
+                <div className="flex items-center justify-between border-b border-white/10 pb-2">
+                  <span className="text-blue-100/80">3 Personal Loans (avg 18%)</span>
+                  <span className="font-bold">₹42,000 EMI</span>
+                </div>
+                <div className="flex items-center justify-between border-b border-white/10 pb-2">
+                  <span className="text-blue-100/80">Credit Card Outstanding (38%)</span>
+                  <span className="font-bold">₹15,000 EMI</span>
+                </div>
+                <div className="flex items-center justify-between border-b border-white/10 pb-2">
+                  <span className="text-blue-100/80">2 App Loans (32%)</span>
+                  <span className="font-bold">₹8,000 EMI</span>
+                </div>
+                <div className="flex items-center justify-between pt-1 text-amber-300">
+                  <span className="font-bold">Total Old EMI</span>
+                  <span className="font-extrabold">₹65,000</span>
+                </div>
+                <div className="mt-2 rounded-xl bg-emerald-500/15 p-3 text-emerald-300 ring-1 ring-emerald-400/25">
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold">After Consolidation (~12%)</span>
+                    <span className="font-extrabold">₹38,000</span>
+                  </div>
+                  <p className="mt-1 text-center text-[13px] font-extrabold">You Save ₹27,000/month!</p>
+                </div>
+              </div>
+            </div>
           </div>
-
-          {/* Arrows */}
-          <button
-            onClick={prev}
-            aria-label="Previous offer"
-            className="absolute left-3 top-1/2 hidden h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/12 text-white transition hover:bg-white/20 sm:flex"
-          >
-            <ChevronLeft className="h-4.5 w-4.5" />
-          </button>
-          <button
-            onClick={next}
-            aria-label="Next offer"
-            className="absolute right-3 top-1/2 hidden h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/12 text-white transition hover:bg-white/20 sm:flex"
-          >
-            <ChevronRight className="h-4.5 w-4.5" />
-          </button>
         </div>
+      </Reveal>
 
-        {/* Dots */}
-        <div className="mt-3.5 flex justify-center gap-2">
-          {PROMO_SLIDES.map((s, i) => (
-            <button
-              key={s.eyebrow}
-              onClick={() => setIndex(i)}
-              aria-label={`Show ${s.eyebrow} offer`}
-              className={`h-1.5 rounded-full transition-all ${i === index ? "w-6 bg-[#0D47A1]" : "w-1.5 bg-slate-200 hover:bg-slate-300"}`}
-            />
+      <Reveal delay={0.1} className="mt-8">
+        <p className="text-center text-[11px] font-extrabold uppercase tracking-wider text-[#0D47A1]">
+          Consolidation Types
+        </p>
+        <h3 className="mt-1 text-center text-[1.4rem] font-extrabold text-slate-900 sm:text-2xl">
+          Choose the Right Strategy
+        </h3>
+        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {CONSOLIDATION_STRATEGIES.map((s) => (
+            <div
+              key={s.title}
+              className="rounded-2xl border border-slate-100 bg-white p-5 shadow-[0_8px_30px_-14px_rgb(15_23_42/0.14)]"
+            >
+              <span
+                className="flex h-10 w-10 items-center justify-center rounded-xl text-white shadow-sm"
+                style={{ background: `linear-gradient(135deg, ${s.c}, ${s.c}CC)` }}
+              >
+                <s.icon className="h-4.5 w-4.5" />
+              </span>
+              <h4 className="mt-3.5 text-[13.5px] font-extrabold text-slate-900">{s.title}</h4>
+              <p className="mt-1.5 text-[12px] leading-relaxed text-slate-500">{s.desc}</p>
+              <span className="mt-3 inline-block rounded-full bg-emerald-50 px-2.5 py-1 text-[10.5px] font-bold text-emerald-700">
+                {s.tag}
+              </span>
+            </div>
+          ))}
+        </div>
+      </Reveal>
+
+      <Reveal delay={0.15} className="mt-8 rounded-2xl bg-slate-50 p-6 sm:p-7">
+        <p className="text-center text-[11px] font-extrabold uppercase tracking-wider text-[#2E7D32]">
+          Why Consolidate
+        </p>
+        <h3 className="mt-1 text-center text-[1.2rem] font-extrabold text-slate-900">Benefits at a Glance</h3>
+        <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {CONSOLIDATION_BENEFITS.map((b) => (
+            <div key={b.label} className="flex items-center gap-3 rounded-xl bg-white p-3.5 shadow-sm">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-[#0D47A1]">
+                <b.icon className="h-4.5 w-4.5" />
+              </span>
+              <span>
+                <span className="block text-[12.5px] font-extrabold text-slate-900">{b.label}</span>
+                <span className="block text-[11px] font-semibold text-slate-500">{b.sub}</span>
+              </span>
+            </div>
           ))}
         </div>
       </Reveal>

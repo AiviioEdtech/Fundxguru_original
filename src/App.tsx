@@ -2,7 +2,7 @@ import { motion, useScroll, useSpring } from "framer-motion";
 import Navbar from "./components/Navbar";
 import Hero, { TrustStrip } from "./components/Hero";
 import EnquiryForm from "./components/EnquiryForm";
-import { AboutUs, Benefits, BlogTeasers, HowItWorks, LoanProducts, PartnerBanks, PromoSlider, WhyChooseUs } from "./components/Sections";
+import { AboutUs, Benefits, BlogTeasers, HowItWorks, LoanConsolidationSpotlight, LoanProducts, PartnerBanks, WhyChooseUs } from "./components/Sections";
 import { EligibilityChecker, EMICalculator } from "./components/Calculators";
 import BankComparison from "./components/BankComparison";
 import { FAQ, Testimonials } from "./components/Social";
@@ -26,7 +26,7 @@ export default function App() {
       <main>
         <Hero />
         <TrustStrip />
-        <PromoSlider />
+        <LoanConsolidationSpotlight />
         <PartnerBanks />
         <LoanProducts />
         <EnquiryForm />
