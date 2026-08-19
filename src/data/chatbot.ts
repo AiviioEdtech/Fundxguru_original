@@ -164,6 +164,27 @@ export const loanTypeQuestions: Record<string, ChatQuestion[]> = {
       options: ["Under ₹25 Lakh", "₹25 - 50 Lakh", "₹50 Lakh - 1 Crore", "₹1 - 2 Crore", "Above ₹2 Crore"],
     },
   ],
+  "Loan Consolidation": [
+    {
+      id: "con1",
+      key: "consolidationType",
+      question: "What would you mainly like to consolidate?",
+      type: "choice",
+      options: [
+        "Multiple Personal Loans",
+        "Credit Card Outstanding",
+        "App Loans (KreditBee, MoneyTap, etc.)",
+        "A Mix of Multiple EMIs",
+      ],
+    },
+    {
+      id: "con2",
+      key: "consolidationGoal",
+      question: "What matters most to you in this consolidation?",
+      type: "choice",
+      options: ["Lowest possible EMI", "Single EMI / one lender", "Fastest debt-free date", "Improving my CIBIL score"],
+    },
+  ],
 };
 
 // URL slug (?loan=<slug>) -> the exact "purpose" value the recommendation engine understands.
@@ -173,6 +194,7 @@ export const LOAN_SLUG_TO_PURPOSE: Record<string, string> = {
   home: "Home Loan",
   "balance-transfer": "Balance Transfer",
   lap: "Loan Against Property",
+  consolidation: "Loan Consolidation",
 };
 
 export const PURPOSE_TO_LABEL: Record<string, string> = {
@@ -181,4 +203,5 @@ export const PURPOSE_TO_LABEL: Record<string, string> = {
   "Home Loan": "Home Loan",
   "Balance Transfer": "Balance Transfer",
   "Loan Against Property": "Loan Against Property",
+  "Loan Consolidation": "Loan Consolidation",
 };

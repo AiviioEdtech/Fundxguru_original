@@ -615,7 +615,7 @@ export function LoanConsolidationSpotlight() {
                 simple, lower-EMI option — from India's top banks &amp; NBFCs.
               </p>
               <div className="mt-6 flex flex-wrap gap-3">
-                <CTAButton href="/?loan=balance-transfer#eligibility" variant="white">
+                <CTAButton href="/?loan=consolidation#eligibility" variant="white">
                   Check Consolidation Eligibility <ArrowRight className="h-4 w-4" />
                 </CTAButton>
                 <CTAButton href={WA_LINK} external variant="green">
