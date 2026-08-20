@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { createClient } from "@supabase/supabase-js";
-import { chatQuestions, debtDetailKeys, debtDetailPurposes } from "../src/data/chatbot";
+import { chatQuestions, debtDetailKeys, debtDetailPurposes, loanTypeQuestions, type ChatQuestion } from "../src/data/chatbot";
 import { generateRecommendation, type UserProfile } from "../src/utils/loan";
 
 // Server-side only — the service role key bypasses RLS, which is exactly what
@@ -25,17 +25,28 @@ function truncate(text: string, max: number): string {
 
 // Same skip logic as the website chatbot: debt-detail questions only show up
 // when the loan purpose actually needs them.
-function getNextStep(currentStep: number, profile: UserProfile): number {
+function getNextStep(currentStep: number, profile: UserProfile, questions: ChatQuestion[]): number {
   let next = currentStep + 1;
   const needsDebtDetails = debtDetailPurposes.includes(profile.purpose || "");
-  while (next < chatQuestions.length) {
-    if (debtDetailKeys.includes(chatQuestions[next].key) && !needsDebtDetails) {
+  while (next < questions.length) {
+    if (debtDetailKeys.includes(questions[next].key) && !needsDebtDetails) {
       next += 1;
     } else {
       break;
     }
   }
   return next;
+}
+
+// Same dynamic question-list logic as the website chatbot (ChatbotEligibility.tsx):
+// once "purpose" is known, splice in that loan type's extra follow-up questions.
+function buildActiveQuestions(purpose: string | undefined): ChatQuestion[] {
+  const list: ChatQuestion[] = [chatQuestions[0], chatQuestions[1]];
+  if (purpose && loanTypeQuestions[purpose]) {
+    list.push(...loanTypeQuestions[purpose]);
+  }
+  list.push(...chatQuestions.slice(2));
+  return list;
 }
 
 async function sendText(to: string, body: string) {
@@ -102,10 +113,10 @@ async function sendQuestion(to: string, question: (typeof chatQuestions)[number]
   });
 }
 
-async function getSession(phone: string): Promise<Session> {
+async function getSession(phone: string): Promise<Session | null> {
   const { data } = await supabase.from("whatsapp_sessions").select("*").eq("phone", phone).maybeSingle();
   if (data) return { phone, step: data.step, profile: data.profile as UserProfile };
-  return { phone, step: 0, profile: {} };
+  return null;
 }
 
 async function saveSession(session: Session) {
@@ -221,16 +232,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     const session = await getSession(phone);
-    const currentQ = chatQuestions[session.step];
 
-    // Brand-new conversation — greet with question 1 regardless of what they typed.
-    if (!currentQ && session.step === 0 && Object.keys(session.profile).length === 0) {
+    // Brand-new conversation (no session row yet) — greet cleanly with Question 1.
+    if (!session) {
       await sendQuestion(phone, chatQuestions[0]);
       await saveSession({ phone, step: 0, profile: {} });
       res.status(200).send("OK");
       return;
     }
 
+    const activeQuestions = buildActiveQuestions(session.profile.purpose);
+    const currentQ = activeQuestions[session.step];
     if (!currentQ) {
       // Session was stale (already finished) — start a fresh one.
       await clearSession(phone);
@@ -276,13 +288,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     const updatedProfile = { ...session.profile, [currentQ.key]: answer };
-    const nextStep = getNextStep(session.step, updatedProfile);
+    const nextActiveQuestions = buildActiveQuestions(updatedProfile.purpose);
+    const nextStep = getNextStep(session.step, updatedProfile, nextActiveQuestions);
 
-    if (nextStep >= chatQuestions.length) {
+    if (nextStep >= nextActiveQuestions.length) {
       await finishAndSendSummary(phone, updatedProfile);
     } else {
       await saveSession({ phone, step: nextStep, profile: updatedProfile });
-      await sendQuestion(phone, chatQuestions[nextStep]);
+      await sendQuestion(phone, nextActiveQuestions[nextStep]);
     }
 
     res.status(200).send("OK");
