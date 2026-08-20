@@ -337,13 +337,18 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 flex flex-col items-center justify-between gap-3 border-t border-white/10 pt-7 text-[12px] font-semibold text-slate-500 sm:flex-row">
-          <p>© {new Date().getFullYear()} FundXGuru. All rights reserved.</p>
-          <p className="flex items-center gap-1.5">
-            Smart Loans. Trusted Guidance.
-            <span className="h-1.5 w-1.5 rounded-full bg-[#F57C00]" />
-            Made in India
+        <div className="mt-12 border-t border-white/10 pt-7">
+          <p className="text-center text-[11px] font-medium text-slate-500">
+            Sasmita Sahoo (Proprietor), trading as FundXGuru · GSTIN: 29DCNPS6738F3ZS
           </p>
+          <div className="mt-3 flex flex-col items-center justify-between gap-3 text-[12px] font-semibold text-slate-500 sm:flex-row">
+            <p>© {new Date().getFullYear()} FundXGuru. All rights reserved.</p>
+            <p className="flex items-center gap-1.5">
+              Smart Loans. Trusted Guidance.
+              <span className="h-1.5 w-1.5 rounded-full bg-[#F57C00]" />
+              Made in India
+            </p>
+          </div>
         </div>
       </div>
 
