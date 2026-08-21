@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
-import { chatQuestions, debtDetailKeys, debtDetailPurposes, loanTypeQuestions, type ChatQuestion } from "../src/data/chatbot";
-import { generateRecommendation, type UserProfile } from "../src/utils/loan";
+import { chatQuestions, debtDetailKeys, debtDetailPurposes, loanTypeQuestions, type ChatQuestion } from "../src/data/chatbot.js";
+import { generateRecommendation, type UserProfile } from "../src/utils/loan.js";
 
 // Server-side only — the service role key bypasses RLS, which is exactly what
 // this function needs (reading/writing session state, inserting leads). It is
