@@ -1,12 +1,22 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { createClient } from "@supabase/supabase-js";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { chatQuestions, debtDetailKeys, debtDetailPurposes, loanTypeQuestions, type ChatQuestion } from "../src/data/chatbot";
 import { generateRecommendation, type UserProfile } from "../src/utils/loan";
 
 // Server-side only — the service role key bypasses RLS, which is exactly what
 // this function needs (reading/writing session state, inserting leads). It is
 // never bundled into the frontend; only ever read from process.env on Vercel.
-const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
+//
+// Built lazily (only when a POST actually needs it), not at module load —
+// the GET webhook-verification handshake never touches Supabase, so a
+// Supabase misconfiguration must never be able to crash the handshake.
+let _supabase: SupabaseClient | null = null;
+function getSupabaseClient(): SupabaseClient {
+  if (!_supabase) {
+    _supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
+  }
+  return _supabase;
+}
 
 const WHATSAPP_ACCESS_TOKEN = process.env.WHATSAPP_ACCESS_TOKEN!;
 const WHATSAPP_PHONE_NUMBER_ID = process.env.WHATSAPP_PHONE_NUMBER_ID!;
@@ -114,13 +124,13 @@ async function sendQuestion(to: string, question: (typeof chatQuestions)[number]
 }
 
 async function getSession(phone: string): Promise<Session | null> {
-  const { data } = await supabase.from("whatsapp_sessions").select("*").eq("phone", phone).maybeSingle();
+  const { data } = await getSupabaseClient().from("whatsapp_sessions").select("*").eq("phone", phone).maybeSingle();
   if (data) return { phone, step: data.step, profile: data.profile as UserProfile };
   return null;
 }
 
 async function saveSession(session: Session) {
-  await supabase.from("whatsapp_sessions").upsert({
+  await getSupabaseClient().from("whatsapp_sessions").upsert({
     phone: session.phone,
     step: session.step,
     profile: session.profile,
@@ -129,14 +139,14 @@ async function saveSession(session: Session) {
 }
 
 async function clearSession(phone: string) {
-  await supabase.from("whatsapp_sessions").delete().eq("phone", phone);
+  await getSupabaseClient().from("whatsapp_sessions").delete().eq("phone", phone);
 }
 
 async function finishAndSendSummary(phone: string, profile: UserProfile) {
   const rec = generateRecommendation(profile);
 
   const id = "ENQ-" + Date.now().toString(36).toUpperCase();
-  await supabase.from("enquiries").insert({
+  await getSupabaseClient().from("enquiries").insert({
     id,
     created_at: new Date().toISOString(),
     name: profile.name || "Anonymous",
